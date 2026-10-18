@@ -85,7 +85,9 @@
     // Finished bar
     const bar = el("div", "finished");
     bar.append(frag('<span class="mark"><span class="px i-check" aria-hidden="true"></span>FINISHED MAP</span>'));
-    const say = el("span", "say"); say.append(el("strong", null, (map.title || "This map") + "."), document.createTextNode(" All five steps are done, every quote has been checked, and this map is saved to Your maps."));
+    const say = el("span", "say"); say.append(el("strong", null, (map.title || "This map") + "."), document.createTextNode(id
+      ? " All five steps are done, every quote has been checked, and this map is saved to Your maps."
+      : " A sample map made with this tool. Every quote was checked against its source page when the map was made."));
     const del = el("button", "btn"); del.type = "button"; del.append(frag('<span class="px i-bin" aria-hidden="true"></span>'), el("span", "lbl", "Delete map"));
     const again = el("a", "btn again"); const ag = el("span", "top"); ag.append(frag('<span class="px i-refresh" aria-hidden="true"></span>'), document.createTextNode("Run again")); again.append(ag, el("span", "sub", "Uses a new research budget")); again.href = "/?rerun=" + encodeURIComponent(id || "");
     const pdf = el("button", "btn solid"); pdf.type = "button";
