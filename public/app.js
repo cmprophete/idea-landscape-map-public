@@ -453,12 +453,37 @@ async function verify(people) {
   return people;
 }
 
+// What happens after research ends, shown as a short list of steps so the switch from
+// researching to building the map is clear, especially after Stop.
+const BUILD_STEPS = ["Finish checking quotes", "Write the summary", "Find recent studies", "Save the map"];
+function showPhase(head, note, at) {
+  const box = el("div", "phase");
+  box.append(el("strong", null, head)); if (note) box.append(el("p", null, note));
+  const ol = el("ol", "psteps");
+  BUILD_STEPS.forEach((label, k) => { const li = el("li", k < at ? "done" : k === at ? "now" : null, label); if (k === at) li.setAttribute("aria-current", "step"); ol.append(li); });
+  box.append(ol);
+  $("#r-status").replaceChildren(box);
+}
+let phaseHead = "", phaseNote = "";
+const setPhase = at => showPhase(phaseHead, phaseNote, at);
+const peopleIn = list => list.reduce((n, b) => n + b.people.length, 0);
+
 $("#stopbtn").addEventListener("click", async () => {
   state.stopped = true;
   state.batches.forEach(b => { if (b.state === "waiting") b.state = "stopped"; if (b.state === "working" && b.ctrl) b.ctrl.abort(); });
   drawBatches(); clearAlert("research");
   $("#stoprow").hidden = true;
   api(`/api/runs/${state.runId}/stop`, {}).catch(() => {});
+  const kept = state.batches.filter(b => b.state === "done" || b.state === "checking");
+  const skipped = state.batches.filter(b => b.state === "stopped");
+  if (kept.length) {
+    $("#r-title").textContent = "Building the map";
+    $("#r-state").textContent = "Stopped early";
+    phaseHead = "You stopped the research. The map is being built from what's done.";
+    phaseNote = `It will include the ${plural(peopleIn(kept), "person", "people")} whose research finished.` + (skipped.length ? ` The other ${plural(peopleIn(skipped), "person", "people")} won't be researched, and the map's notes will list them.` : "");
+    setPhase(state.batches.some(b => b.state === "checking") ? 0 : 1);
+    $("#r-status").scrollIntoView({ behavior: matchMedia("(prefers-reduced-motion: reduce)").matches ? "auto" : "smooth", block: "center" });
+  }
   // Groups already checking quotes have finished their research, so let them finish.
   while (state.batches.some(b => b.state === "checking" || b.state === "working")) await new Promise(ok => setTimeout(ok, 300));
   if (state.batches.some(b => b.state === "done")) return build();
@@ -484,8 +509,14 @@ async function build() {
   if (building) return; building = true;
   await draftSaving;
   $("#stoprow").hidden = true; $("#buildbtn").hidden = true;
-  $("#r-state").textContent = "Saving";
-  $("#r-status").textContent = "Writing the summary, finding recent studies, and saving the map…";
+  $("#r-title").textContent = "Building the map";
+  if (!state.stopped) {
+    $("#r-state").textContent = "Building";
+    const failed = state.batches.filter(b => b.state !== "done");
+    phaseHead = failed.length ? "Building the map from the groups that finished." : "Research is done. Now building the map.";
+    phaseNote = failed.length ? `${cap(plural(peopleIn(failed), "person", "people"))} in groups that didn't finish won't be on the map, and the map's notes will list them.` : "";
+  }
+  setPhase(1);
   const all = state.batches.filter(b => b.state === "done").flatMap(b => b.result || []);
   const dropped = [], people = []; let removed = 0, unchecked = 0;
   all.forEach(r => {
@@ -509,9 +540,11 @@ async function build() {
   }
   try {
     // The summary and the recent studies run at the same time. If the studies step fails, the map still saves.
+    let left = 2;
+    const tick = x => { left--; if (!left) setPhase(3); return x; };
     const [sum, st] = await Promise.all([
-      api("/api/summary", { runId: state.runId, people: people.map(x => { const k = x.q.map(q => q[7]).filter(Boolean); return { name: x.name, leader: x.co, who: x.who, position: x.s, data: k.filter(v => v === "data").length, quotes: k.length, why: x.why }; }) }),
-      api("/api/studies", { runId: state.runId, people: people.map(x => ({ name: x.name, data_note: x.dataNote || "" })) }).catch(() => null)
+      api("/api/summary", { runId: state.runId, people: people.map(x => { const k = x.q.map(q => q[7]).filter(Boolean); return { name: x.name, leader: x.co, who: x.who, position: x.s, data: k.filter(v => v === "data").length, quotes: k.length, why: x.why }; }) }).then(x => { setPhase(2); return tick(x); }),
+      api("/api/studies", { runId: state.runId, people: people.map(x => ({ name: x.name, data_note: x.dataNote || "" })) }).catch(() => null).then(tick)
     ]);
     if (st) addUse(st.usage);
     addUse(sum.usage);
