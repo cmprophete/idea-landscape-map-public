@@ -201,7 +201,7 @@ async function route(request, env, ctx, url) {
     // Maps saved before the redesign lack quote counts and the position bar. Fill them in once.
     let changed = false;
     for (let k = 0; k < index.length; k++) {
-      if (Array.isArray(index[k].dist)) continue;
+      if (Array.isArray(index[k].dist) && "partial" in index[k]) continue;
       const raw = await env.MAPS.get("map:" + index[k].id);
       if (raw) { index[k] = indexEntry(index[k].id, JSON.parse(raw)); changed = true; }
     }
@@ -552,8 +552,16 @@ function indexEntry(id, map) {
   return {
     id, title: map.title, claim: map.claim, researched: map.researched, count: people.length,
     quotes: people.reduce((n, p) => n + (Array.isArray(p.q) ? p.q.length : 0), 0),
-    dist: [1, 2, 3, 4, 5].map(s => people.filter(p => p.s === s).length)
+    dist: [1, 2, 3, 4, 5].map(s => people.filter(p => p.s === s).length),
+    partial: isPartial(map),
+    // How many people were researched, when the map recorded it.
+    ...(map.partial && map.partial.total ? { researchedOf: [map.partial.total - (map.partial.skipped || []).length, map.partial.total] } : {})
   };
+}
+// Built before every person was researched: after Stop, a budget stop, or a failed group.
+// Maps saved before the label existed are recognized by their "Not researched" note.
+function isPartial(map) {
+  return !!map.partial || (Array.isArray(map.notes) && map.notes.some(n => /^Not researched because/.test(String(n))));
 }
 function slug(s) { return String(s).toLowerCase().replace(/[^a-z0-9]+/g, "-").replace(/^-|-$/g, "").slice(0, 60) || "map"; }
 function looseJSON(s) {
