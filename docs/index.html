@@ -1,0 +1,50 @@
+<!doctype html>
+<html lang="en">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1, viewport-fit=cover">
+<title>Idea Landscape Map demo</title>
+<meta name="description" content="A sample map made with Idea Landscape Map: where academics, writers, and industry voices stand on a policy claim, backed by verbatim quotes checked against their sources.">
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+<link href="https://fonts.googleapis.com/css2?family=Geist:wght@400;500;600&family=Geist+Mono:wght@400;500&display=swap" rel="stylesheet">
+<link rel="icon" href="icons/map.svg" type="image/svg+xml">
+<link rel="stylesheet" href="styles.css">
+<style>
+  .demo-note { display: flex; flex-wrap: wrap; gap: 6px 16px; align-items: baseline; justify-content: space-between; padding: 12px 18px; border-bottom: 1px solid var(--strong); background: var(--panel); font-size: 15px; }
+  .demo-note strong { font-family: var(--mono); font-size: 12px; font-weight: 500; letter-spacing: .06em; text-transform: uppercase; }
+  @media print { .demo-note { display: none !important; } }
+</style>
+</head>
+<body>
+<header class="site-header">
+  <a class="brand" href="https://github.com/cmprophete/idea-landscape-map-public">Idea Landscape Map</a>
+  <nav class="site-nav" aria-label="Main">
+    <a href="https://github.com/cmprophete/idea-landscape-map-public">Get the code</a>
+    <a href="#method">Method</a>
+  </nav>
+</header>
+<p class="demo-note"><strong>Demo</strong><span>This page shows one map made with the tool. To make your own, set up your own copy with the steps on <a href="https://github.com/cmprophete/idea-landscape-map-public#setup">GitHub</a>.</span></p>
+<div id="root"><p class="loading muted">Loading the map…</p></div>
+<footer class="site-footer">
+  <div class="fine"><p class="credit">Icons by <a href="https://www.streamlinehq.com">Streamline</a>, <a href="https://creativecommons.org/licenses/by/4.0/">CC BY 4.0</a>.</p><p class="disc">Idea Landscape Map. Built with Claude.</p></div>
+</footer>
+<script src="map.js"></script>
+<script>
+// The demo draws one saved map from demo-map.json. It never calls the server,
+// so it costs nothing to host and can't start new research.
+(async () => {
+  const root = document.getElementById("root");
+  try {
+    const r = await fetch("demo-map.json", { cache: "no-cache" });
+    if (!r.ok) throw new Error();
+    const data = await r.json();
+    document.title = (data.title || "Map") + " · Idea Landscape Map demo";
+    LandscapeMap.render(data, root, null);
+  } catch {
+    root.innerHTML = '<main class="lost"><span class="eyebrow">Demo</span><h1>The sample map isn\'t here yet.</h1><p class="note">Check back soon, or set up your own copy from the code on GitHub.</p></main>';
+  }
+})();
+</script>
+</body>
+</html>
