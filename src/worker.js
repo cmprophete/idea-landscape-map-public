@@ -201,7 +201,7 @@ async function route(request, env, ctx, url) {
     // Maps saved before the redesign lack quote counts and the position bar. Fill them in once.
     let changed = false;
     for (let k = 0; k < index.length; k++) {
-      if (Array.isArray(index[k].dist) && "partial" in index[k]) continue;
+      if (Array.isArray(index[k].dist) && index[k].v === 2) continue;
       const raw = await env.MAPS.get("map:" + index[k].id);
       if (raw) { index[k] = indexEntry(index[k].id, JSON.parse(raw)); changed = true; }
     }
@@ -553,15 +553,27 @@ function indexEntry(id, map) {
     id, title: map.title, claim: map.claim, researched: map.researched, count: people.length,
     quotes: people.reduce((n, p) => n + (Array.isArray(p.q) ? p.q.length : 0), 0),
     dist: [1, 2, 3, 4, 5].map(s => people.filter(p => p.s === s).length),
-    partial: isPartial(map),
-    // How many people were researched, when the map recorded it.
-    ...(map.partial && map.partial.total ? { researchedOf: [map.partial.total - (map.partial.skipped || []).length, map.partial.total] } : {})
+    ...partialEntry(map), v: 2
   };
 }
+function partialEntry(map) {
+  const p = partialInfo(map);
+  if (!p) return { partial: false };
+  return { partial: true, ...(p.total ? { researchedOf: [p.total - p.skipped.length, p.total] } : {}) };
+}
 // Built before every person was researched: after Stop, a budget stop, or a failed group.
-// Maps saved before the label existed are recognized by their "Not researched" note.
-function isPartial(map) {
-  return !!map.partial || (Array.isArray(map.notes) && map.notes.some(n => /^Not researched because/.test(String(n))));
+// Maps saved before the label existed are read from their "Not researched because" note,
+// with the total taken from the saved list of people.
+function partialInfo(map) {
+  if (map.partial && map.partial.total) return map.partial;
+  const note = (Array.isArray(map.notes) ? map.notes : []).map(String).find(n => /^Not researched because/.test(n));
+  if (!note && !map.partial) return null;
+  const m = note ? note.match(/^Not researched because (.*?): (.*)\.$/) : null;
+  const skipped = m ? m[2].split(", ").filter(Boolean) : [];
+  const reason = !m ? "" : /stopped/.test(m[1]) ? "stopped" : /budget/.test(m[1]) ? "budget" : "failed";
+  const placed = (Array.isArray(map.people) ? map.people.length : 0) + (Array.isArray(map.dropped) ? map.dropped.length : 0);
+  const total = Array.isArray(map.roster) && map.roster.length ? map.roster.length : placed + skipped.length;
+  return { reason, skipped, total: skipped.length ? total : 0 };
 }
 function slug(s) { return String(s).toLowerCase().replace(/[^a-z0-9]+/g, "-").replace(/^-|-$/g, "").slice(0, 60) || "map"; }
 function looseJSON(s) {
