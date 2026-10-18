@@ -192,6 +192,18 @@ legend.plain { padding-bottom: 12px; font-size: 16px; font-weight: 400; color: v
 .groups li.failed .btn { min-height: 44px; font-size: 14px; background: #FFFFFF; color: #0A0A0A; border-color: #0A0A0A; }
 .rbox .alertslot:not(:empty) { padding: 14px 0; }
 .rbox .status:not(:empty) { padding: 12px 0; font-size: 15px; }
+.phase { display: flex; flex-direction: column; gap: 8px; padding: 16px; border: 2px solid var(--strong); background: var(--panel); }
+.phase strong { font-size: 20px; font-weight: 500; letter-spacing: -.02em; line-height: 1.25; }
+.phase p { font-size: 15px; color: var(--soft); max-width: 70ch; }
+.psteps { list-style: none; margin: 4px 0 0; padding: 0; display: flex; flex-wrap: wrap; gap: 8px; }
+.psteps li { display: inline-flex; align-items: center; gap: 8px; padding: 6px 10px; border: 1px solid var(--line); font-family: var(--mono); font-size: 12px; letter-spacing: .04em; color: var(--muted); }
+.psteps li::before { content: ""; width: 8px; height: 8px; border: 1.5px solid currentColor; }
+.psteps li.done { color: var(--ink); border-color: var(--strong); }
+.psteps li.done::before { background: currentColor; }
+.psteps li.now { color: var(--inv-ink); background: var(--inv-bg); border-color: var(--inv-bg); }
+.psteps li.now::before { border-radius: 50%; animation: pulse 1.2s ease-in-out infinite; }
+@keyframes pulse { 50% { opacity: .25; } }
+@media (prefers-reduced-motion: reduce) { .psteps li.now::before { animation: none; } }
 
 /* Messages when something stops */
 .alert { display: flex; flex-wrap: wrap; gap: 16px 20px; padding: 20px; background: var(--panel); border: 2px solid var(--strong); }
