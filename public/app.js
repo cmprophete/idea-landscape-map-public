@@ -553,10 +553,14 @@ async function build() {
     if (removed) notes.push(`The automatic check removed ${plural(removed, "quote", "quotes")} that didn't match ${removed > 1 ? "their" : "its"} source page.`);
     if (unchecked) notes.push(`${cap(plural(unchecked, "quote comes", "quotes come"))} from pages the automatic check couldn't open, and each is marked.`);
     const notRun = state.batches.filter(b => b.state !== "done").flatMap(b => b.people.map(x => x.name));
-    if (notRun.length) notes.push((state.stopped ? "Not researched because the research was stopped: " : "Not researched because their group failed: ") + notRun.join(", ") + ".");
+    // A map built without every group is labeled partial, with the reason.
+    const why = state.stopped ? "stopped" : state.batches.some(b => b.kind === "budget") ? "budget" : "failed";
+    const WHY_NOTE = { stopped: "the research was stopped", budget: "the map reached its spending budget", failed: "their group didn't finish" };
+    if (notRun.length) notes.push(`Not researched because ${WHY_NOTE[why]}: ${notRun.join(", ")}.`);
     const map = {
       title: state.title, claim: state.claim, researched: nyToday(), finding: sum.finding || "", gap: sum.gap || "", gapV: 1, labelsV: 1,
       ...(st ? { studies: st.studies || [], studiesV: 1 } : {}),
+      ...(notRun.length ? { partial: { reason: why, skipped: notRun, total: peopleIn(state.batches) } } : {}),
       headcount: people.reduce((n, x) => n + (x.name.includes(" and ") ? x.name.split(" and ").length : 1), 0),
       people, notes, usage, usageAll: true, dropped, summaryV: 2,
       ...(people.every(x => typeof x.bio === "string") ? { profilesV: 1 } : {}),
@@ -607,6 +611,12 @@ async function loadMaps() {
         bar.setAttribute("aria-label", m.dist.map((n, k) => `${n} ${LBL[k]}`).join(", "));
         m.dist.forEach((n, k) => { if (!n) return; const s = el("span"); s.style.flex = n; s.style.background = POSFILL[k]; bar.append(s); });
         meta.append(bar);
+      }
+      if (m.partial) {
+        // Built before every person was researched (after Stop, a budget stop, or a failed group).
+        const tag = el("span", "tag"); tag.append(svg('<span class="px sm i-info" aria-hidden="true"></span>'), document.createTextNode("Partial map"));
+        meta.append(tag);
+        if (Array.isArray(m.researchedOf)) meta.append(el("span", "eyebrow", `${num(m.researchedOf[0])} of ${plural(m.researchedOf[1], "person", "people")} researched`));
       }
       meta.append(el("span", "eyebrow", apDate(m.researched)));
       a.append(t, meta); li.append(a); ul.append(li);
