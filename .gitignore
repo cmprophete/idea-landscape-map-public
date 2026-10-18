@@ -1,0 +1,8 @@
+node_modules/
+.wrangler/
+.dev.vars
+.DS_Store
+# Your own Cloudflare settings (copy wrangler.example.toml to start)
+wrangler.toml
+# Saved map exports
+maps/

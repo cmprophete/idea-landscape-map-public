@@ -1,0 +1,229 @@
+<!doctype html>
+<html lang="en">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1, viewport-fit=cover">
+<title>Idea Landscape Map</title>
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+<link href="https://fonts.googleapis.com/css2?family=Geist:wght@400;500;600&family=Geist+Mono:wght@400;500&display=swap" rel="stylesheet">
+<link rel="icon" id="favicon" href="/icons/map.svg" type="image/svg+xml">
+<link rel="stylesheet" href="/styles.css">
+</head>
+<body>
+<header class="site-header">
+  <a class="brand" href="/">Idea Landscape Map</a>
+  <nav class="site-nav" aria-label="Main">
+    <a href="/#maps" data-home-link>Your maps</a>
+  </nav>
+</header>
+
+<nav class="steps" id="steps" aria-label="Steps" hidden>
+  <ol>
+    <li><span class="n">01</span><span class="l">Statement</span></li>
+    <li><span class="n">02</span><span class="l">Clarify</span></li>
+    <li><span class="n">03</span><span class="l">Claim</span></li>
+    <li><span class="n">04</span><span class="l">People</span></li>
+    <li><span class="n">05</span><span class="l">Research</span></li>
+  </ol>
+</nav>
+
+<!-- Home -->
+<main class="view" id="v-home">
+  <div class="home-top">
+    <div class="home-art" aria-hidden="true"></div>
+    <section class="newmap" id="new" aria-labelledby="h-new">
+      <div class="intro">
+        <h1 id="h-new">What idea do you want to map?</h1>
+        <p>Write out the idea or claim. It doesn't have to be perfect. We'll help you clarify it, then show where academics, writers, and industry leaders stand on it, in their own words. <a href="#how">See how it works</a>.</p>
+      </div>
+      <form id="f-statement">
+        <label for="statement" class="sr">Your idea</label>
+        <textarea id="statement" rows="5" maxlength="1000" required placeholder="For example: AI is already making it harder for young people to get their first job."></textarea>
+        <button class="go blue" type="submit">Sharpen this idea <span class="px sm arrow i-arrow" aria-hidden="true"></span></button>
+        <div class="alertslot" aria-live="assertive"></div>
+      </form>
+    </section>
+  </div>
+
+  <section class="list-section" id="maps" aria-labelledby="h-maps">
+    <h2 id="h-maps" class="eyebrow">Your maps</h2>
+    <div class="body">
+      <ul class="maps" id="maplist"><li><div class="empty"><span>Loading your maps…</span></div></li></ul>
+    </div>
+  </section>
+
+  <section class="list-section" id="how" aria-labelledby="h-how">
+    <h2 id="h-how" class="eyebrow">How it works</h2>
+    <div class="body">
+      <ol class="how">
+        <li><span class="mono">01</span><strong class="ttl"><span class="px i-pencil" aria-hidden="true"></span>Statement</strong><span>Write out the idea or claim. It doesn't have to be perfect.</span></li>
+        <li><span class="mono">02</span><strong class="ttl"><span class="px i-question" aria-hidden="true"></span>Clarify</strong><span>Answer up to four questions so the claim is precise.</span></li>
+        <li><span class="mono">03</span><strong class="ttl"><span class="px i-target" aria-hidden="true"></span>Claim</strong><span>Pick one of three versions, or edit it.</span></li>
+        <li><span class="mono">04</span><strong class="ttl"><span class="px i-people" aria-hidden="true"></span>People</strong><span>Start from the key voices in the debate, then add or remove names.</span></li>
+        <li><span class="mono">05</span><strong class="ttl"><span class="px i-search" aria-hidden="true"></span>Research</strong><span>Claude reads each person's own words, and every quote is checked against its source.</span></li>
+      </ol>
+      <p class="hownote">Each step uses Claude, Anthropic's AI model. It suggests the questions and claim versions, searches the web for people and what they've said, places each person, and writes the summary. The quote checks are done separately by the app's own code, which reopens each source page.</p>
+    </div>
+  </section>
+
+  <section class="list-section" id="limits" aria-labelledby="h-limits" style="border-bottom: 0">
+    <h2 id="h-limits" class="eyebrow">What to keep in mind</h2>
+    <div class="body">
+      <ul class="limits">
+        <li><strong><span class="px i-info" aria-hidden="true"></span>Built with Claude</strong><span>This app is built and run with Claude, Anthropic's AI model, which can make mistakes. Read the quotes and open the linked sources before you rely on a placement.</span></li>
+        <li><strong><span class="px i-coin" aria-hidden="true"></span>Usage</strong><span>Usage depends on your available credits and tokens. Most of it goes to research, so each map covers up to 12 people and stays within its research budget.</span></li>
+        <li><strong><span class="px i-camera" aria-hidden="true"></span>A snapshot in time</strong><span>Each map shows what people had said as of its research date. Perspectives change, so a placement can go out of date. Run a map again to see what's shifted.</span></li>
+        <li><strong><span class="px i-search-user" aria-hidden="true"></span>Who gets found</strong><span>The app finds people through what they've published or said on the record online: articles, papers, interviews, and posts. Community members whose views carry real weight but who have little media presence, such as organizers, workers, and local leaders, can be missing. You can add names on the People step, but the app can only place someone whose words it can find and check.</span></li>
+        <li><strong><span class="px i-link-broken" aria-hidden="true"></span>Sources it can't read</strong><span>Some sites block automated reading, including several major newspapers and social platforms. Recent statements published there may be missing.</span></li>
+      </ul>
+    </div>
+  </section>
+
+  <footer class="site-footer">
+    <div class="fine"><p class="credit">Icons by <a href="https://www.streamlinehq.com">Streamline</a>, <a href="https://creativecommons.org/licenses/by/4.0/">CC BY 4.0</a>.</p><p class="disc">Idea Landscape Map. Built with Claude.</p></div>
+  </footer>
+</main>
+
+<!-- Waiting between steps -->
+<main class="view" id="v-wait" hidden>
+  <section class="hero" aria-labelledby="h-wait"><h1 id="h-wait"></h1></section>
+  <div class="split">
+    <span class="eyebrow">Working</span>
+    <div class="body" style="gap: 28px">
+      <div class="topline"><p class="bigtext" id="wait-text"></p></div>
+      <div class="waitbox" role="status">
+        <p class="msg"><span class="px i-hourglass spin" aria-hidden="true"></span><span id="wait-msg" aria-live="off"></span></p>
+        <div class="progress" role="progressbar" aria-labelledby="h-wait" aria-valuetext="Working"><div class="run"></div></div>
+        <p class="note" id="wait-note"></p>
+      </div>
+      <button class="textbtn" type="button" id="wait-cancel"></button>
+    </div>
+  </div>
+</main>
+
+<!-- 2. Clarify -->
+<main class="view" id="v-clarify" hidden>
+  <section class="hero" aria-labelledby="h-clarify"><h1 id="h-clarify">A few questions first</h1></section>
+  <div class="split">
+    <span class="eyebrow">Your idea</span>
+    <form class="body" id="f-clarify">
+      <div class="topline">
+        <p class="bigtext" id="c-statement"></p>
+        <p class="note" id="assessment"></p>
+      </div>
+      <div id="questions" style="display: flex; flex-direction: column; gap: 40px"></div>
+      <div class="alertslot" aria-live="assertive"></div>
+      <div class="actions">
+        <button class="go" type="submit">Write the claim <span class="px sm arrow i-arrow" aria-hidden="true"></span></button>
+        <button class="textbtn" type="button" data-back="home">Back to your idea</button>
+      </div>
+    </form>
+  </div>
+</main>
+
+<!-- 3. Claim -->
+<main class="view" id="v-claim" hidden>
+  <section class="hero" aria-labelledby="h-claim"><h1 id="h-claim">Pick the claim to map</h1></section>
+  <div class="split">
+    <span class="eyebrow">Three versions</span>
+    <form class="body" id="f-claim">
+      <fieldset id="claims">
+        <legend class="plain">Each version is one sentence people can agree or disagree with, built from your answers. The first is the closest fit.</legend>
+      </fieldset>
+      <div class="field">
+        <label for="claim">Claim to map (edit if you like)</label>
+        <textarea id="claim" rows="3" maxlength="400" required></textarea>
+      </div>
+      <div class="field">
+        <label for="title">Map name</label>
+        <input type="text" id="title" maxlength="80" required>
+      </div>
+      <div class="alertslot" aria-live="assertive"></div>
+      <div class="actions">
+        <p class="small soft">Finding the key voices takes about a minute and runs a few web searches.</p>
+        <button class="go" type="submit">Suggest people <span class="px sm arrow i-arrow" aria-hidden="true"></span></button>
+        <button class="textbtn" type="button" data-back="clarify">Back to the questions</button>
+      </div>
+    </form>
+  </div>
+</main>
+
+<!-- 4. People -->
+<main class="view" id="v-people" hidden>
+  <section class="hero" aria-labelledby="h-people"><h1 id="h-people" style="max-width: 12ch">Who should we research?</h1></section>
+  <div class="split" style="align-items: flex-start">
+    <span class="eyebrow">The claim</span>
+    <form class="body" id="f-people" style="gap: 48px">
+      <div class="topline">
+        <p class="bigtext" id="p-claim"></p>
+        <p class="note" id="p-note">These are the voices others in the debate cite and argue with, found through a web search. Remove anyone who doesn't belong and add anyone missing.</p>
+      </div>
+      <section class="group" aria-labelledby="h-acad">
+        <h2 id="h-acad">Academics, writers, and thought leaders<sup class="fn" id="n-acad"></sup></h2>
+        <ul class="plist" id="l-acad"></ul>
+      </section>
+      <section class="group" aria-labelledby="h-lead">
+        <h2 id="h-lead">Industry leaders<sup class="fn" id="n-lead"></sup></h2>
+        <ul class="plist" id="l-lead"></ul>
+      </section>
+      <section class="group" aria-labelledby="h-added" id="g-added" hidden>
+        <h2 id="h-added">Added by you<sup class="fn" id="n-added"></sup></h2>
+        <p class="small soft addednote">Claude will sort each person into a group during research.</p>
+        <ul class="plist" id="l-added"></ul>
+      </section>
+      <div class="addform" role="group" aria-labelledby="h-add">
+        <span class="head eyebrow" id="h-add" style="color: inherit">Add someone</span>
+        <div class="cells">
+          <div class="cell"><label for="addname">Name</label><input id="addname" type="text" maxlength="120"></div>
+          <div class="cell"><label for="addrole">Organization or affiliation</label><input id="addrole" type="text" maxlength="160"></div>
+        </div>
+        <button class="add" type="button" id="addbtn">Add to the list <span class="px sm i-plus" aria-hidden="true"></span></button>
+      </div>
+      <div class="alertslot" aria-live="assertive"></div>
+      <div class="actions">
+        <p class="small limitnote" id="p-limit" aria-live="polite"></p>
+        <p class="small soft">Research takes several minutes and runs web searches on your Anthropic account. Each map stays within its research budget, and you can stop at any time.</p>
+        <button class="go" type="submit" id="startbtn">Start research <span class="px sm arrow i-arrow" aria-hidden="true"></span></button>
+        <button class="textbtn" type="button" data-back="claim" id="p-back">Back to the claim</button>
+      </div>
+    </form>
+  </div>
+</main>
+
+<!-- 5. Research -->
+<main class="view" id="v-research" hidden>
+  <section class="hero" aria-labelledby="r-title"><h1 id="r-title">Researching</h1></section>
+  <div class="split">
+    <span class="eyebrow" id="r-state">Working</span>
+    <div class="body">
+      <div class="topline">
+        <p class="bigtext" id="r-claim"></p>
+        <p class="note">Claude reads each person's own published words. Then the server reopens every source and checks each quote word for word. Keep this tab open. It takes several minutes.</p>
+      </div>
+      <div class="rbox">
+        <div class="stats">
+          <div><span class="big" id="s-groups">0/0</span><span class="lab">Groups done</span></div>
+          <div><span class="big" id="s-quotes">0</span><span class="lab">Quotes confirmed</span></div>
+          <div><span class="big" id="s-budget">0%</span><span class="lab">Of the spending budget</span></div>
+        </div>
+        <div class="stoprow" id="stoprow">
+          <p>Want to keep costs down? Stop now and build the map from the groups that are done. Stopped groups don't use any more of the budget.</p>
+          <button class="btn" type="button" id="stopbtn">Stop and build with what's done</button>
+        </div>
+        <ul class="groups" id="groups" aria-live="polite"></ul>
+        <div class="alertslot" aria-live="assertive"></div>
+        <p class="status" id="r-status" role="status"></p>
+      </div>
+      <div class="actions">
+        <button class="go" type="button" id="resumebtn" hidden>Continue research <span class="px sm arrow i-arrow" aria-hidden="true"></span></button>
+        <button class="go" type="button" id="buildbtn" hidden>Build the map <span class="px sm arrow i-arrow" aria-hidden="true"></span></button>
+        <button class="linkbtn" type="button" id="discardbtn" hidden>Discard this map</button>
+      </div>
+    </div>
+  </div>
+</main>
+
+<script src="/app.js"></script>
+</body>
+</html>

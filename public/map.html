@@ -1,0 +1,78 @@
+<!doctype html>
+<html lang="en">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1, viewport-fit=cover">
+<title>Idea Landscape Map</title>
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+<link href="https://fonts.googleapis.com/css2?family=Geist:wght@400;500;600&family=Geist+Mono:wght@400;500&display=swap" rel="stylesheet">
+<link rel="icon" href="/icons/map.svg" type="image/svg+xml">
+<link rel="stylesheet" href="/styles.css">
+</head>
+<body>
+<header class="site-header">
+  <a class="brand" href="/">Idea Landscape Map</a>
+  <nav class="site-nav" aria-label="Main">
+    <a href="/#maps">Your maps</a>
+    <a href="#method">Method</a>
+  </nav>
+</header>
+<div id="root"><p class="loading muted">Loading the map…</p></div>
+<footer class="site-footer">
+  <div class="fine"><p class="credit">Icons by <a href="https://www.streamlinehq.com">Streamline</a>, <a href="https://creativecommons.org/licenses/by/4.0/">CC BY 4.0</a>.</p><p class="disc">Idea Landscape Map. Built with Claude.</p></div>
+</footer>
+<script src="/map.js"></script>
+<script>
+(async () => {
+  const root = document.getElementById("root");
+  const id = new URLSearchParams(location.search).get("id");
+  const fail = msg => { root.innerHTML = '<main class="lost"><span class="px i-dinosaur lost-icon" aria-hidden="true"></span><span class="eyebrow">Map not loaded</span><h1>That map wandered off.</h1><p class="note"></p><a class="go lost-go" href="/">Go to your maps <span class="px sm i-arrow arrow" aria-hidden="true"></span></a></main>'; root.querySelector(".note").textContent = msg; };
+  if (!id) return fail("This link is missing the map's ID. Go back to your maps and pick one.");
+  try {
+    const r = await fetch("/api/maps/" + encodeURIComponent(id));
+    let data = await r.json();
+    if (!r.ok) return fail(data.error || "Couldn't load this map.");
+    document.title = (data.title || "Map") + " · Idea Landscape Map";
+    LandscapeMap.render(data, root, id);
+    // Redraw with new text or links, keeping the selected person and the scroll position.
+    const redraw = () => {
+      const sel = root.querySelector('.chip[aria-pressed="true"]'), y = scrollY;
+      const label = sel && sel.getAttribute("aria-label");
+      LandscapeMap.render(data, root, id);
+      if (label) { const c = [...root.querySelectorAll(".chip")].find(x => x.getAttribute("aria-label") === label); if (c) c.click(); }
+      scrollTo(0, y);
+    };
+    // Maps made before the "who they are" labels and quote tags: add them once, then the
+    // summary of where data and commentary part ways, then the recent studies. Each step
+    // saves as it goes, so an interrupted upgrade picks up where it stopped.
+    const step = async path => {
+      try { const s = await fetch("/api/maps/" + encodeURIComponent(id) + path, { method: "POST" }); if (!s.ok) return false; data = await s.json(); redraw(); return true; }
+      catch { return false; }
+    };
+    const labeled = data.labelsV || await step("/relabel");
+    // Older summaries refer to positions by number ("position 4", "at 2 or 3") or to "rows",
+    // or notes are in the first person ("the sources I read"). Rewrite those once in words.
+    const text = [data.finding, data.lens, ...(data.people || []).flatMap(x => [x.why, x.caveat, x.shift, x.interest, x.evn, ...(x.q || []).map(q => q[5])]), ...(data.dropped || []).map(d => d.reason)].filter(Boolean).join(" ");
+    const oldWords = data.summaryV !== 2 && /\b(I|I'm|I've|I'd|[Mm]e|[Mm]y|[Ww]e|[Ww]e're|[Oo]ur|us)\b|\bpositions? \d|\b(at|between) [1-5]\b|\b[1-5] (or|and|to) [1-5]\b|\brows?\b/.test(text);
+    if (oldWords || (labeled && !data.gapV)) await step("/summary");
+    if (labeled && !data.studiesV) await step("/studies");
+    // Maps made before bio and latest-work links: look them up once, three people at a time.
+    if (!data.profilesV && Array.isArray(data.people)) {
+      const todo = data.people.filter(x => typeof x.bio !== "string");
+      let got = 0;
+      for (let i = 0; i < todo.length; i += 3) {
+        const part = todo.slice(i, i + 3);
+        try {
+          const s = await fetch("/api/profiles", { method: "POST", headers: { "content-type": "application/json" }, body: JSON.stringify({ mapId: id, people: part.map(x => ({ name: x.name, role: x.role, leader: x.co })) }) });
+          if (!s.ok) break;
+          (await s.json()).profiles.forEach((pr, j) => { Object.assign(part[j], { bio: pr.bio || "", pubs: pr.pubs || [], pubsFrom: pr.from }); got++; });
+        } catch { break; }
+      }
+      if (got) redraw();
+    }
+  } catch { fail("Couldn't reach the server. Check your connection and reload."); }
+})();
+</script>
+</body>
+</html>

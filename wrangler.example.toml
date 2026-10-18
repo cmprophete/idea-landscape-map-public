@@ -1,0 +1,32 @@
+# Cloudflare Workers settings for the Idea Landscape Map app.
+# Copy this file to wrangler.toml and fill in your own values. wrangler.toml is ignored by git.
+name = "idea-landscape-map"
+main = "src/worker.js"
+compatibility_date = "2026-09-01"
+workers_dev = true
+preview_urls = false
+
+# The pages in public/ are served as static files. Anything under /api/ runs the server code.
+[assets]
+directory = "./public"
+binding = "ASSETS"
+not_found_handling = "404-page"
+
+# Saved maps and research runs.
+# Run `npx wrangler kv namespace create MAPS` and paste the id it prints here.
+[[kv_namespaces]]
+binding = "MAPS"
+id = "paste-your-kv-namespace-id-here"
+
+[vars]
+MODEL = "claude-sonnet-5-5"
+# Most tokens one map may use before its remaining research groups are stopped.
+# Check your Anthropic Console to see what this costs. Raise it if maps keep stopping early.
+RUN_TOKEN_BUDGET = "1500000"
+# Fill these in after you set up Cloudflare Access (see README).
+ACCESS_TEAM_DOMAIN = "yourteam.cloudflareaccess.com"
+ACCESS_AUD = "paste-your-access-audience-tag-here"
+
+# Keeps server logs in the dashboard (Observability tab).
+[observability]
+enabled = true
