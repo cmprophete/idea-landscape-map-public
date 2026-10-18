@@ -291,6 +291,9 @@ legend.plain { padding-bottom: 12px; font-size: 16px; font-weight: 400; color: v
 .finished .mark { display: inline-flex; align-items: center; gap: 8px; font-family: var(--mono); font-size: 12px; letter-spacing: .06em; font-weight: 500; }
 .finished .say { flex: 1 1 320px; font-size: 15px; }
 .finished .say strong { font-weight: 600; }
+/* A partial map: same bar, but gray instead of green, with a dashed label. Fixed colors, like the green bar, so it reads the same in dark mode. */
+.finished.partial { background: #E5E5E5; color: #0A0A0A; }
+.finished.partial .mark { border-style: dashed !important; }
 .finished .btn { min-height: 44px; padding: 0 14px; background: transparent; color: #0A0A0A; border-color: #0A0A0A; }
 .finished .btn.solid { background: #0A0A0A; color: #FFFFFF; }
 .finished .btn.again { flex-direction: column; gap: 0; line-height: 1.2; padding: 4px 14px; }
