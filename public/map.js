@@ -83,11 +83,23 @@
     root.replaceChildren();
 
     // Finished bar
-    const bar = el("div", "finished");
-    bar.append(frag('<span class="mark"><span class="px i-check" aria-hidden="true"></span>FINISHED MAP</span>'));
-    const say = el("span", "say"); say.append(el("strong", null, (map.title || "This map") + "."), document.createTextNode(id
+    const partial = map.partial || (Array.isArray(map.notes) && map.notes.some(n => /^Not researched because/.test(String(n))) ? {} : null);
+    const bar = el("div", "finished" + (partial ? " partial" : ""));
+    bar.append(frag(partial
+      ? '<span class="mark"><span class="px i-info" aria-hidden="true"></span>PARTIAL MAP</span>'
+      : '<span class="mark"><span class="px i-check" aria-hidden="true"></span>FINISHED MAP</span>'));
+    const say = el("span", "say"); say.append(el("strong", null, (map.title || "This map") + "."), document.createTextNode(partialText() || (id
       ? " All five steps are done, every quote has been checked, and this map is saved to Your maps."
-      : " A sample map made with this tool. Every quote was checked against its source page when the map was made."));
+      : " A sample map made with this tool. Every quote was checked against its source page when the map was made.")));
+    function partialText() {
+      if (!partial) return "";
+      const why = { stopped: "the research was stopped", budget: "the map reached its spending budget", failed: "a research group didn't finish" }[partial.reason];
+      const skipped = Array.isArray(partial.skipped) ? partial.skipped.length : 0;
+      const head = partial.total && skipped
+        ? ` Built from ${plural(partial.total - skipped, "person", "people")} out of ${partial.total}${why ? `, because ${why}` : ""}.`
+        : " Some people weren't researched.";
+      return head + " Their names are in the notes under the chart." + (id ? " Run again to research everyone." : "");
+    }
     const del = el("button", "btn"); del.type = "button"; del.append(frag('<span class="px i-bin" aria-hidden="true"></span>'), el("span", "lbl", "Delete map"));
     const again = el("a", "btn again"); const ag = el("span", "top"); ag.append(frag('<span class="px i-refresh" aria-hidden="true"></span>'), document.createTextNode("Run again")); again.append(ag, el("span", "sub", "Uses a new research budget")); again.href = "/?rerun=" + encodeURIComponent(id || "");
     const pdf = el("button", "btn solid"); pdf.type = "button";
@@ -350,7 +362,8 @@
 
       // Page 1
       const p1 = el("section", "ppage first");
-      p1.append(runhead("IDEA LANDSCAPE MAP · FINISHED MAP", "RESEARCHED " + apDate(map.researched).toUpperCase()));
+      p1.append(runhead("IDEA LANDSCAPE MAP · " + (partial ? "PARTIAL MAP" : "FINISHED MAP"), "RESEARCHED " + apDate(map.researched).toUpperCase()));
+      if (partial) p1.append(el("p", "pnote", "Partial map." + partialText().replace(" Run again to research everyone.", "")));
       p1.append(block(eyebrow("The claim"), el("h1", null, map.claim)));
       if (map.finding) { const f = lead(map.finding); p1.append(block(eyebrow("The finding"), el("h2", null, f.head), el("p", null, f.rest.join(" ")))); }
       const grid = el("div", "pchart");
