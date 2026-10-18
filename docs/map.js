@@ -68,6 +68,21 @@
     const b = el("div", "body"); s.append(b); return [s, b];
   }
 
+  // Built before every person was researched: after Stop, a budget stop, or a failed group.
+  // Maps saved before the label existed are read from their "Not researched because" note,
+  // with the total taken from the saved list of people.
+  function partialInfo(map) {
+    if (map.partial && map.partial.total) return map.partial;
+    const note = (Array.isArray(map.notes) ? map.notes : []).map(String).find(n => /^Not researched because/.test(n));
+    if (!note && !map.partial) return null;
+    const m = note ? note.match(/^Not researched because (.*?): (.*)\.$/) : null;
+    const skipped = m ? m[2].split(", ").filter(Boolean) : [];
+    const reason = !m ? "" : /stopped/.test(m[1]) ? "stopped" : /budget/.test(m[1]) ? "budget" : "failed";
+    const placed = (Array.isArray(map.people) ? map.people.length : 0) + (Array.isArray(map.dropped) ? map.dropped.length : 0);
+    const total = Array.isArray(map.roster) && map.roster.length ? map.roster.length : placed + skipped.length;
+    return { reason, skipped, total: skipped.length ? total : 0 };
+  }
+
   function render(map, root, id) {
     const P = map.people.map((p, i) => ({ ...p, i }));
     const posOf = s => POS[s - 1];
@@ -83,7 +98,7 @@
     root.replaceChildren();
 
     // Finished bar
-    const partial = map.partial || (Array.isArray(map.notes) && map.notes.some(n => /^Not researched because/.test(String(n))) ? {} : null);
+    const partial = partialInfo(map);
     const bar = el("div", "finished" + (partial ? " partial" : ""));
     bar.append(frag(partial
       ? '<span class="mark"><span class="px i-info" aria-hidden="true"></span>PARTIAL MAP</span>'
