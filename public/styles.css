@@ -1,4 +1,4 @@
-/* Idea Landscape Map. One stylesheet for the home page, the new-map steps, and saved maps. */
+/* Beyond the Hot Take: an idea landscape map. One stylesheet for the home page, the new-map steps, and saved maps. */
 
 :root {
   --bg: #FFFFFF;
@@ -72,8 +72,10 @@ sup.fn a { padding: 2px; }
 
 /* Header */
 .site-header { display: flex; flex-wrap: wrap; align-items: stretch; border-bottom: 1px solid var(--strong); background: var(--bg); }
-.brand { display: flex; align-items: center; padding: 8px 18px; background: var(--inv-bg); color: var(--inv-ink); text-decoration: none; font-size: 20px; font-weight: 600; letter-spacing: -.04em; }
+.brand { display: flex; flex-wrap: wrap; align-content: center; align-items: baseline; padding: 8px 18px; background: var(--inv-bg); color: var(--inv-ink); text-decoration: none; font-size: 20px; font-weight: 600; letter-spacing: -.04em; }
 .brand:hover { color: var(--inv-ink); }
+.brand-tag { margin-left: 10px; font-size: 14px; font-weight: 400; letter-spacing: 0; opacity: .8; }
+@media (max-width: 760px) { .brand-tag { display: none; } }
 .site-nav { flex: 2 1 340px; display: flex; flex-wrap: wrap; align-items: baseline; align-content: center; justify-content: flex-end; gap: 4px 28px; padding: 0 18px; font-size: 15px; font-weight: 500; }
 .site-nav a { padding: 12px 0; text-decoration: none; }
 
