@@ -56,7 +56,7 @@ function go(view, step) {
   window.scrollTo(0, 0);
   const h = $("#v-" + view + " h1");
   if (h && view !== "home") { h.tabIndex = -1; h.focus({ preventScroll: true }); }
-  document.title = view === "home" ? "Idea Landscape Map" : `${STEPS[at]} · Idea Landscape Map`;
+  document.title = view === "home" ? "Beyond the Hot Take: an idea landscape map" : `${STEPS[at]} · Beyond the Hot Take`;
 }
 document.querySelectorAll("[data-back]").forEach(b => b.addEventListener("click", () => go(b.dataset.back)));
 document.querySelectorAll("[data-home-link]").forEach(a => a.addEventListener("click", e => {
@@ -496,7 +496,7 @@ $("#stopbtn").addEventListener("click", async () => {
 // While research runs, the browser tab shows an hourglass so you can see it's still working.
 function tabBusy(on) {
   const link = document.getElementById("favicon"); if (link) link.href = on ? "/icons/hourglass.svg" : "/icons/map.svg";
-  document.title = on ? "Researching… · Idea Landscape Map" : document.title.replace(/^Researching… · /, "");
+  document.title = on ? "Researching… · Beyond the Hot Take" : document.title.replace(/^Researching… · /, "");
 }
 
 // ---------- 6. Build and save ----------
