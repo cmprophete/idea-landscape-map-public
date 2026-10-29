@@ -1,6 +1,6 @@
 // SPDX-License-Identifier: AGPL-3.0-only
 // Copyright (C) 2026 Christelle Prophete. See LICENSE.
-// Idea Landscape Map server. Runs on Cloudflare Workers.
+// Beyond the Hot Take server (an idea landscape map). Runs on Cloudflare Workers.
 // The page calls these routes; every prompt and model setting stays here.
 import { sharpenPrompt, refinePrompt, candidatesPrompt, researchPrompt, summaryPrompt, tidyPrompt, profilesPrompt, studiesPrompt, relabelPrompt, WHO_GROUPS } from "./prompts.js";
 
