@@ -1,4 +1,6 @@
-# Idea Landscape Maps
+# Beyond the Hot Take
+
+*An idea landscape map.*
 
 Researched maps of where academics, writers, and industry leaders stand on specific policy claims. Each placement rests on verbatim quotes checked against the source page.
 
