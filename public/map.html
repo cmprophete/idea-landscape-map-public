@@ -3,7 +3,7 @@
 <head>
 <meta charset="utf-8">
 <meta name="viewport" content="width=device-width, initial-scale=1, viewport-fit=cover">
-<title>Idea Landscape Map</title>
+<title>Beyond the Hot Take: an idea landscape map</title>
 <link rel="preconnect" href="https://fonts.googleapis.com">
 <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
 <link href="https://fonts.googleapis.com/css2?family=Geist:wght@400;500;600&family=Geist+Mono:wght@400;500&display=swap" rel="stylesheet">
@@ -12,7 +12,7 @@
 </head>
 <body>
 <header class="site-header">
-  <a class="brand" href="/">Idea Landscape Map</a>
+  <a class="brand" href="/">Beyond the Hot Take<span class="brand-tag">an idea landscape map</span></a>
   <nav class="site-nav" aria-label="Main">
     <a href="/#maps">Your maps</a>
     <a href="#method">Method</a>
@@ -20,7 +20,7 @@
 </header>
 <div id="root"><p class="loading muted">Loading the map…</p></div>
 <footer class="site-footer">
-  <div class="fine"><p class="credit">Icons by <a href="https://www.streamlinehq.com">Streamline</a>, <a href="https://creativecommons.org/licenses/by/4.0/">CC BY 4.0</a>.</p><p class="disc">Idea Landscape Map. Built with Claude.</p></div>
+  <div class="fine"><p class="credit">Icons by <a href="https://www.streamlinehq.com">Streamline</a>, <a href="https://creativecommons.org/licenses/by/4.0/">CC BY 4.0</a>.</p><p class="disc">Beyond the Hot Take: an idea landscape map. Built with Claude.</p></div>
 </footer>
 <script src="/map.js"></script>
 <script>
@@ -33,7 +33,7 @@
     const r = await fetch("/api/maps/" + encodeURIComponent(id));
     let data = await r.json();
     if (!r.ok) return fail(data.error || "Couldn't load this map.");
-    document.title = (data.title || "Map") + " · Idea Landscape Map";
+    document.title = (data.title || "Map") + " · Beyond the Hot Take";
     LandscapeMap.render(data, root, id);
     // Redraw with new text or links, keeping the selected person and the scroll position.
     const redraw = () => {
