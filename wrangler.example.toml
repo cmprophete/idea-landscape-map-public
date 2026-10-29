@@ -1,4 +1,4 @@
-# Cloudflare Workers settings for the Idea Landscape Map app.
+# Cloudflare Workers settings for Beyond the Hot Take, an idea landscape map.
 # Copy this file to wrangler.toml and fill in your own values. wrangler.toml is ignored by git.
 name = "idea-landscape-map"
 main = "src/worker.js"
